@@ -1,0 +1,61 @@
+// Interface Strategy (Contrato comum)
+interface PagamentoStrategy {
+    void pagar(double valor);
+}
+
+// Estratégias Concretas
+class CartaoCredito implements PagamentoStrategy {
+    @Override
+    public void pagar(double valor) {
+        System.out.printf("Pagando R$%.2f via Cartão de Crédito%n", valor);
+    }
+}
+
+class Pix implements PagamentoStrategy {
+    @Override
+    public void pagar(double valor) {
+        double desconto = valor * 0.95; // 5% de desconto
+        System.out.printf("Pagando R$%.2f via Pix (com desconto: R$%.2f)%n", valor, desconto);
+    }
+}
+
+class Boleto implements PagamentoStrategy {
+    @Override
+    public void pagar(double valor) {
+        System.out.printf("Pagando R$%.2f via Boleto (vencimento em 3 dias)%n", valor);
+    }
+}
+
+// Contexto (Classe que usa a Strategy)
+class CarrinhoDeCompras {
+    private PagamentoStrategy estrategia;
+
+    public void setEstrategia(PagamentoStrategy estrategia) {
+        this.estrategia = estrategia;
+    }
+
+    public void finalizarCompra(double valor) {
+        if (estrategia != null) {
+            estrategia.pagar(valor);
+        } else {
+            System.out.println("Nenhuma forma de pagamento selecionada!");
+        }
+    }
+}
+
+// Cliente (Exemplo de uso)
+public class Main {
+    public static void main(String[] args) {
+        CarrinhoDeCompras carrinho = new CarrinhoDeCompras();
+
+        // Troca dinâmica de estratégias:
+        carrinho.setEstrategia(new CartaoCredito());
+        carrinho.finalizarCompra(100.00); // Pagando via Cartão
+
+        carrinho.setEstrategia(new Pix());
+        carrinho.finalizarCompra(100.00); // Pagando via Pix com desconto
+
+        carrinho.setEstrategia(new Boleto());
+        carrinho.finalizarCompra(100.00); // Pagando via Boleto
+    }
+}
